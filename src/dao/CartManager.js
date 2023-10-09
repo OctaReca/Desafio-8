@@ -1,16 +1,21 @@
-import { cartModel } from "./models/cart.model.js";
+import { cartModel } from "../models/cart.model.js";
 import mongoose from "mongoose";
 
 class CartManager {
     async newCart() {
-        console.log("Cart created!");
-        return await cartModel.create({products:[]});
+        let cart = await cartModel.create({ products: [] });
+        console.log("Cart created:", cart);
+        return {
+            status: "ok",
+            message: "El Carrito se creó correctamente!",
+            id: cart._id,
+        };
     }
 
     async getCart(id) {
         try {
-            return await cartModel.findOne({_id:id}) || null;
-        } catch(error) {
+            return await cartModel.findOne({ _id: id }) || null;
+        } catch (error) {
             console.log("Not found!");
 
             return null;
@@ -23,31 +28,31 @@ class CartManager {
 
     async addProduct(cid, pid) {
         try {
-            if (await cartModel.exists({_id:cid, products:{$elemMatch:{product:pid}}})) {
-                await cartModel.updateOne({_id:cid, products:{$elemMatch:{product:pid}}}, {$inc:{"products.$.quantity":1}}, {new:true, upsert:true});
+            if (await cartModel.exists({ _id: cid, products: { $elemMatch: { product: pid } } })) {
+                await cartModel.updateOne({ _id: cid, products: { $elemMatch: { product: pid } } }, { $inc: { "products.$.quantity": 1 } }, { new: true, upsert: true });
             } else {
-                await cartModel.updateOne({_id:cid}, {$push:{products:{"product":pid, "quantity":1}}}, {new:true, upsert:true});
+                await cartModel.updateOne({ _id: cid }, { $push: { products: { "product": pid, "quantity": 1 } } }, { new: true, upsert: true });
             }
 
             console.log("Product added!");
-    
+
             return true;
         } catch (error) {
             console.log("Not found!");
-                
+
             return false;
         }
     }
 
     async updateProducts(cid, products) {
         try {
-            await cartModel.updateOne({_id:cid}, {products:products}, {new:true, upsert:true});
+            await cartModel.updateOne({ _id: cid }, { products: products }, { new: true, upsert: true });
             console.log("Product updated!");
-    
+
             return true;
         } catch (error) {
             console.log("Not found!");
-            
+
             return false;
         }
     }

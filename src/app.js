@@ -15,14 +15,15 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import ChatManager from './dao/ChatManager.js';
 import cookieParser from 'cookie-parser';
+import { MONGO_URL, SECRET_KEY_SESSION, PORT } from "./config/config.js";
 
 const app = express();
-const PORT = 8080;
+const port = process.env.PORT || 8080;
 
-const httpServer = app.listen(PORT, () => {
-    console.log(`Servidor express puerto: ${PORT}`);
+const httpServer = app.listen(port, () => {
+    console.log(`Servidor express puerto: ${port}`);
 });
-const socketServer = new Server(httpServer);
+export const socketServer = new Server(httpServer);
 const CM = new ChatManager();
 
 app.set('socketServer', socketServer)
@@ -41,13 +42,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
-        secret: "M5E7",
+        secret: process.env.SECRET_KEY_SESSION,
         resave: false,
         saveUninitialized: false,
         cookie: { secure: false },
         store: MongoStore.create({
-            mongoUrl:
-                "mongodb+srv://marieljoaco:dakota123@database.yjqt73t.mongodb.net/ecomerce?retryWrites=true&w=majority",
+            mongoUrl: process.env.MONGO_URL,
             collectionName: "sessions",
         }),
     })
@@ -63,7 +63,7 @@ app.use("/", viewsRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/", viewsRouter);
 
-mongoose.connect("mongodb+srv://octavioreca1:octavio123@cluster0.e63otbo.mongodb.net/ecommerce?retryWrites=true&w=majority")
+mongoose.connect(process.env.MONGO_URL)
 
 mongoose.connection.on("connected", () => {
     console.log("Conectado a MongoDB");

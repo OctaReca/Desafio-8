@@ -1,8 +1,11 @@
 import passport from "passport";
 import jwt from "passport-jwt"
 import local from "passport-local";
-import { userModel } from "../dao/models/user.model.js";
+import { userModel } from "../models/user.model.js";
 import { createHash, isValidPassword } from ".././utils.js";
+import GitHubStrategy from "passport-github2";
+import AuthService from "../services/authServices.js";
+import { JWT_SECRET, CLIENT_ID_GITHUB, CLIENT_SECRET_GITHUB, ADMIN_EMAIL, ADMIN_PASSWORD } from "../config/config.js";
 
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
@@ -31,6 +34,8 @@ const initializePassport = () => {
                         age,
                         password: createHash(password),
                     };
+
+                    console.log("Rol antes de la asignación:", user.role);
 
                     if (
                         user.email == "adminCoder@coder.com" &&
@@ -100,6 +105,32 @@ const initializePassport = () => {
         )
     );
 };
+
+passport.use(
+    "github",
+    new GitHubStrategy(
+        {
+            clientID: process.env.CLIENT_ID_GITHUB,
+            clientSecret: process.env.CLIENT_SECRET_GITHUB,
+            callbackURL: "http://localhost:8080/api/sessions/githubcallback",
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                const authService = new AuthService();
+                console.log("Profile:", JSON.stringify(profile, null, 2));
+                const user = await authService.githubCallback(profile);
+
+                if (user) {
+                    return done(null, user);
+                } else {
+                    return done(null, false);
+                }
+            } catch (error) {
+                return done(error);
+            }
+        }
+    )
+);
 
 passport.serializeUser((user, done) => {
     done(null, user._id);
