@@ -6,7 +6,7 @@ import { JWT_SECRET } from "../config/config.js";
 class AuthService {
     constructor() {
         this.userManager = new UserManager();
-        this.secretKey = JWT_SECRET;
+        this.secretKey = process.env.JWT_SECRET;
     }
 
     async login(email, password) {

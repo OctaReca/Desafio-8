@@ -5,7 +5,7 @@ import { userModel } from "../models/user.model.js";
 import { createHash, isValidPassword } from ".././utils.js";
 import GitHubStrategy from "passport-github2";
 import AuthService from "../services/authServices.js";
-import { JWT_SECRET, CLIENT_ID_GITHUB, CLIENT_SECRET_GITHUB, ADMIN_EMAIL, ADMIN_PASSWORD } from "../config/config.js";
+// import { JWT_SECRET, CLIENT_ID_GITHUB, CLIENT_SECRET_GITHUB, ADMIN_EMAIL, ADMIN_PASSWORD } from "./config.js";
 
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;

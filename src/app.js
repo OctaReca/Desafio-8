@@ -15,13 +15,12 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import ChatManager from './dao/ChatManager.js';
 import cookieParser from 'cookie-parser';
-import { MONGO_URL, SECRET_KEY_SESSION, PORT } from "./config/config.js";
 
 const app = express();
-const port = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 
-const httpServer = app.listen(port, () => {
-    console.log(`Servidor express puerto: ${port}`);
+const httpServer = app.listen(PORT, () => {
+    console.log(`Servidor express puerto: ${PORT}`);
 });
 export const socketServer = new Server(httpServer);
 const CM = new ChatManager();
