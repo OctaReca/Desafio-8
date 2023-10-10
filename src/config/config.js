@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config({path:"./src/config/.env"});
 
-export const PORT= 8000
+export const PORT= process.env.PORT || 8080
 export const MONGO_URL= process.env.MONGO_URL
 export const SECRET_KEY_SESSION= process.env.SECRET_KEY_SESSION
 export const JWT_SECRET= process.env.JWT_SECRET
